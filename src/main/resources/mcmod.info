@@ -1,0 +1,21 @@
+{
+  "modListVersion": 2,
+  "modList": [{
+    "modid": "foodcontrol",
+    "name": "Food Control",
+    "description": "Allows to configure the hunger and saturation for all foods in the game.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": " ",
+    "updateUrl": "",
+    "authorList": [ "soronthar" ],
+    "credits": "Authored by soronthar",
+    "logoFile": "",
+    "screenshots": [ "" ],
+    "parent": "",
+    "requiredMods": [ "applecore" ],
+    "dependencies": [ "applecore" ],
+    "dependants": [ ],
+    "useDependencyInformation": true
+  }]
+}

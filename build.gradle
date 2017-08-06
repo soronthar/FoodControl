@@ -1,0 +1,97 @@
+buildscript {
+    repositories {
+        jcenter()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+    }
+}
+
+apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'maven-publish'
+
+sourceCompatibility = JavaVersion.VERSION_1_8
+targetCompatibility = JavaVersion.VERSION_1_8
+
+repositories {
+    maven {
+        name 'Progwml6 maven (JEI)'
+        url "http://dvs1.progwml6.com/files/maven"
+    }
+    maven {
+        name = "AppleCore"
+        url "http://www.ryanliptak.com/maven/"
+    }
+}
+
+ext {
+    minecraft_version="1.12"
+    forge_version="14.21.1.2387"
+    mappings_version="snapshot_20170624"
+    mod_version="0.1.0"
+    jei_version="4.7.0.68"
+}
+
+ext.buildnumber = ""
+if (System.getenv().BUILD_NUMBER) {
+    ext.buildnumber = "-" + System.getenv().BUILD_NUMBER
+}
+
+version = "${minecraft_version}-${mod_version}${buildnumber}"
+group = "mc.foodcontrol"
+archivesBaseName = "FoodControl"
+
+minecraft {
+    version = "${minecraft_version}-${forge_version}"
+    runDir = "run"
+    mappings = "${mappings_version}"
+    replace "@VERSION@", "${mod_version}"
+    replace "@FORGEVERSION@", "${forge_version}"
+    replaceIn "FoodControlInfo.java"
+}
+
+dependencies {
+    deobfCompile "applecore:AppleCore:1.12-2.2.2:deobf"
+
+    //Not really needed, I just like JEI to cheat items in survival
+    runtime "mezz.jei:jei_${minecraft_version}:${jei_version}"
+}
+
+processResources
+        {
+            inputs.property "version", project.version
+            inputs.property "mcversion", project.minecraft.version
+
+            from(sourceSets.main.resources.srcDirs) {
+                include 'mcmod.info'
+
+                expand 'version': project.version, 'mcversion': project.minecraft.version
+            }
+
+            from(sourceSets.main.resources.srcDirs) {
+                exclude 'mcmod.info'
+            }
+        }
+
+publishing {
+    tasks.publish.dependsOn 'build'
+    publications {
+        mavenJava(MavenPublication) {
+            artifactId 'FoodControl'
+            artifact jar
+        }
+    }
+    repositories {
+        if (project.hasProperty('maven_repo')) {
+            maven { url maven_repo }
+        } else {
+            mavenLocal()
+        }
+    }
+}
+
+idea { module { inheritOutputDirs = true } }
